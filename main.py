@@ -1,19 +1,13 @@
-# main.py
 import logging
-from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import List, Dict
 
 # -----------------------------
-# 日志优化开始
+# 日志优化
 # -----------------------------
-# 配置全局 Python 日志等级为 INFO
 logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s:%(name)s:%(message)s"
 )
 
-# 单独设置 uvicorn 日志等级
 uvicorn_logger = logging.getLogger("uvicorn")
 uvicorn_logger.setLevel(logging.INFO)
 
