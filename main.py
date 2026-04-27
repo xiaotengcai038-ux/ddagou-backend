@@ -40,7 +40,7 @@ def get_ip_accounts():
     return {"accounts": ip_accounts_db}
 
 # -------------------------
-# 示例：其他接口可以在这里继续添加
+# 其他接口可以在这里继续添加
 # -------------------------
 # @app.post("/generate_copy")
 # def generate_copy():
