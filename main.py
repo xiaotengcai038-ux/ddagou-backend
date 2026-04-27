@@ -1,78 +1,87 @@
-from fastapi import FastAPI
+# main.py
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Dict
 
-app = FastAPI()
+app = FastAPI(title="大狗智能体后端")
 
-# =======================
-# 根路径，避免 404
-# =======================
+# ------------------------------
+# 数据模型示例
+# ------------------------------
+class IPAccount(BaseModel):
+    ip: str
+    account: str
+
+class CopyRequest(BaseModel):
+    source_id: str
+    target_id: str
+
+# 模拟数据库（内存）
+ip_accounts_db: List[IPAccount] = []
+content_calendar_db: List[Dict] = []
+knowledge_base_db: List[Dict] = []
+materials_db: List[Dict] = []
+data_board_db: List[Dict] = []
+deep_learning_samples_db: List[Dict] = []
+
+# ------------------------------
+# 根接口
+# ------------------------------
 @app.get("/")
 def home():
     return {"message": "大狗智能体后端运行中"}
 
-# =======================
-# 数据模型
-# =======================
-class IPAccount(BaseModel):
-    ip: str = "示例IP"
-    account: str = "示例账户"
-
-class GenerateCopyRequest(BaseModel):
-    content: str = "示例内容"
-
-# =======================
-# 示例数据（可改为数据库）
-# =======================
-ip_accounts_db = []
-content_calendar_db = [{"id": 1, "content": "示例日程"}]
-knowledge_base_db = [{"id": 1, "knowledge": "示例知识"}]
-materials_db = [{"id": 1, "material": "示例素材"}]
-data_board_db = [{"id": 1, "stat": "示例统计"}]
-deep_learning_samples_db = [{"id": 1, "sample": "示例深度学习样本"}]
-
-# =======================
-# 接口
-# =======================
-
-# POST /ip_account
+# ------------------------------
+# IP 账号接口
+# ------------------------------
 @app.post("/ip_account")
-def add_ip_account(ip_account: IPAccount = IPAccount()):
-    ip_accounts_db.append(ip_account.dict())
-    return {"message": "IP账户添加成功", "data": ip_account}
+def add_ip_account(account: IPAccount):
+    ip_accounts_db.append(account)
+    return {"status": "success", "account": account}
 
-# GET /ip_accounts
 @app.get("/ip_accounts")
 def get_ip_accounts():
-    return {"data": ip_accounts_db}
+    return {"accounts": ip_accounts_db}
 
-# POST /generate_copy
+# ------------------------------
+# 文案生成接口
+# ------------------------------
 @app.post("/generate_copy")
-def generate_copy(req: GenerateCopyRequest = GenerateCopyRequest()):
-    generated = req.content + " - 生成文案示例"
-    return {"generated_copy": generated}
+def generate_copy(req: CopyRequest):
+    # 这里写你的生成逻辑，我先返回示例
+    return {"status": "success", "message": f"文案已从 {req.source_id} 生成到 {req.target_id}"}
 
-# GET /content_calendar
+# ------------------------------
+# 内容日历接口
+# ------------------------------
 @app.get("/content_calendar")
 def get_content_calendar():
-    return {"data": content_calendar_db}
+    return {"content_calendar": content_calendar_db}
 
-# GET /knowledge_base
+# ------------------------------
+# 知识库接口
+# ------------------------------
 @app.get("/knowledge_base")
 def get_knowledge_base():
-    return {"data": knowledge_base_db}
+    return {"knowledge_base": knowledge_base_db}
 
-# GET /materials
+# ------------------------------
+# 素材接口
+# ------------------------------
 @app.get("/materials")
 def get_materials():
-    return {"data": materials_db}
+    return {"materials": materials_db}
 
-# GET /data_board
+# ------------------------------
+# 数据看板接口
+# ------------------------------
 @app.get("/data_board")
 def get_data_board():
-    return {"data": data_board_db}
+    return {"data_board": data_board_db}
 
-# GET /deep_learning_samples
+# ------------------------------
+# 深度学习示例接口
+# ------------------------------
 @app.get("/deep_learning_samples")
 def get_deep_learning_samples():
-    return {"data": deep_learning_samples_db}
+    return {"samples": deep_learning_samples_db}
