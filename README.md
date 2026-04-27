@@ -1,11 +1,16 @@
 # 大狗智能体后端
 
-## 部署方式
+启动命令：
+uvicorn main:app --host 0.0.0.0 --port 10000
 
-### Railway
-- 自动使用 `uvicorn main:app --host 0.0.0.0 --port $PORT` 启动
-- 访问 Railway 提供的域名即可
-
-### 本地调试
-```bash
-uvicorn main:app --reload
+接口示例：
+POST /ip_account
+GET /ip_accounts
+POST /generate_copy
+GET /content_calendar
+GET /knowledge_base
+GET /materials
+GET /data_board
+GET /deep_learning_samples
+GET /hot_topics
+GET /ai_videos
