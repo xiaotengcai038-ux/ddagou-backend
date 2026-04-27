@@ -1,24 +1,33 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict
 
-app = FastAPI()
+app = FastAPI(title="大狗智能体后端")
 
 # -------------------------
-# 模型定义
+# 数据模型
 # -------------------------
 class IPAccount(BaseModel):
     ip: str
     username: str
     password: str
 
-# -------------------------
-# 内存数据库（临时存储）
-# -------------------------
-ip_accounts_db: List[IPAccount] = []
+class CopyRequest(BaseModel):
+    source_id: str
+    target_id: str
 
 # -------------------------
-# 首页
+# 内存数据库（示例）
+# -------------------------
+ip_accounts_db: List[IPAccount] = []
+content_calendar_db: List[Dict] = [{"id":1,"content":"示例日程"}]
+knowledge_base_db: List[Dict] = [{"id":1,"knowledge":"示例知识"}]
+materials_db: List[Dict] = [{"id":1,"material":"示例素材"}]
+data_board_db: List[Dict] = [{"id":1,"stat":"示例统计"}]
+deep_learning_samples_db: List[Dict] = [{"id":1,"sample":"示例深度学习样本"}]
+
+# -------------------------
+# 根路径
 # -------------------------
 @app.get("/")
 def home():
@@ -40,8 +49,44 @@ def get_ip_accounts():
     return {"accounts": ip_accounts_db}
 
 # -------------------------
-# 其他接口可以在这里继续添加
+# POST /generate_copy
 # -------------------------
-# @app.post("/generate_copy")
-# def generate_copy():
-#     pass
+@app.post("/generate_copy")
+def generate_copy(req: CopyRequest):
+    generated = f"文案已从 {req.source_id} 生成到 {req.target_id}"
+    return {"generated_copy": generated}
+
+# -------------------------
+# GET /content_calendar
+# -------------------------
+@app.get("/content_calendar")
+def get_content_calendar():
+    return {"data": content_calendar_db}
+
+# -------------------------
+# GET /knowledge_base
+# -------------------------
+@app.get("/knowledge_base")
+def get_knowledge_base():
+    return {"data": knowledge_base_db}
+
+# -------------------------
+# GET /materials
+# -------------------------
+@app.get("/materials")
+def get_materials():
+    return {"data": materials_db}
+
+# -------------------------
+# GET /data_board
+# -------------------------
+@app.get("/data_board")
+def get_data_board():
+    return {"data": data_board_db}
+
+# -------------------------
+# GET /deep_learning_samples
+# -------------------------
+@app.get("/deep_learning_samples")
+def get_deep_learning_samples():
+    return {"data": deep_learning_samples_db}
