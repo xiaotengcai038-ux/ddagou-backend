@@ -1,5 +1,5 @@
 fastapi==0.111.2
 uvicorn==0.24.1
-pydantic>=2.3.0
+pydantic>=2.3.0   # 支持 Python 3.13
 requests==2.31.0
-python-multipart==0.0.6  # 如果有文件上传需求
+python-multipart==0.0.6
