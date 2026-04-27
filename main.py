@@ -1,73 +1,78 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Optional
 
-app = FastAPI(title="大狗超级获客智能体")
+app = FastAPI()
 
-# 示例 IP 账号
+# =======================
+# 根路径，避免 404
+# =======================
+@app.get("/")
+def home():
+    return {"message": "大狗智能体后端运行中"}
+
+# =======================
+# 数据模型
+# =======================
 class IPAccount(BaseModel):
-    id: int
-    name: str
-    industry: str
-    product: str
-    persona: str
-    customer_profile: str
+    ip: str = "示例IP"
+    account: str = "示例账户"
 
-ip_accounts_db: List[IPAccount] = []
+class GenerateCopyRequest(BaseModel):
+    content: str = "示例内容"
 
-@app.post('/ip_account')
-def create_ip_account(account: IPAccount):
-    ip_accounts_db.append(account)
-    return {'message': 'IP账号创建成功', 'account': account}
+# =======================
+# 示例数据（可改为数据库）
+# =======================
+ip_accounts_db = []
+content_calendar_db = [{"id": 1, "content": "示例日程"}]
+knowledge_base_db = [{"id": 1, "knowledge": "示例知识"}]
+materials_db = [{"id": 1, "material": "示例素材"}]
+data_board_db = [{"id": 1, "stat": "示例统计"}]
+deep_learning_samples_db = [{"id": 1, "sample": "示例深度学习样本"}]
 
-@app.get('/ip_accounts')
-def list_ip_accounts():
-    return ip_accounts_db
+# =======================
+# 接口
+# =======================
 
-# 文案生成示例
-class CopyRequest(BaseModel):
-    ip_id: int
-    theme: str
+# POST /ip_account
+@app.post("/ip_account")
+def add_ip_account(ip_account: IPAccount = IPAccount()):
+    ip_accounts_db.append(ip_account.dict())
+    return {"message": "IP账户添加成功", "data": ip_account}
 
-@app.post('/generate_copy')
-def generate_copy(req: CopyRequest):
-    copy_text = f"AI生成文案示例: 针对IP {req.ip_id}, 主题 {req.theme}"
-    return {'copy': copy_text}
+# GET /ip_accounts
+@app.get("/ip_accounts")
+def get_ip_accounts():
+    return {"data": ip_accounts_db}
 
-# 其它模块接口
-content_calendar: List[Dict] = [{'date': '2026-04-27', 'title': '示例内容'}]
-knowledge_base: List[Dict] = [{'title': '行业指南示例'}]
-materials: List[Dict] = [{'name': '示例素材'}]
-data_board: Dict = {'total_copies': 5, 'ip_count': len(ip_accounts_db)}
+# POST /generate_copy
+@app.post("/generate_copy")
+def generate_copy(req: GenerateCopyRequest = GenerateCopyRequest()):
+    generated = req.content + " - 生成文案示例"
+    return {"generated_copy": generated}
 
-@app.get('/content_calendar')
+# GET /content_calendar
+@app.get("/content_calendar")
 def get_content_calendar():
-    return content_calendar
+    return {"data": content_calendar_db}
 
-@app.get('/knowledge_base')
+# GET /knowledge_base
+@app.get("/knowledge_base")
 def get_knowledge_base():
-    return knowledge_base
+    return {"data": knowledge_base_db}
 
-@app.get('/materials')
+# GET /materials
+@app.get("/materials")
 def get_materials():
-    return materials
+    return {"data": materials_db}
 
-@app.get('/data_board')
+# GET /data_board
+@app.get("/data_board")
 def get_data_board():
-    return data_board
+    return {"data": data_board_db}
 
-# 深度学习、爆款选题、AI视频接口示例
-deep_learning_samples: List[Dict] = [{'title': '示例文案样本'}]
-@app.get('/deep_learning_samples')
+# GET /deep_learning_samples
+@app.get("/deep_learning_samples")
 def get_deep_learning_samples():
-    return deep_learning_samples
-
-hot_topics: List[Dict] = [{'title': '爆款选题示例'}]
-@app.get('/hot_topics')
-def get_hot_topics():
-    return hot_topics
-
-ai_videos: List[Dict] = [{'title': 'AI生成视频示例'}]
-@app.get('/ai_videos')
-def get_ai_videos():
-    return ai_videos
+    return {"data": deep_learning_samples_db}
