@@ -1,120 +1,66 @@
-# main.py
-import logging
-import os
-import uvicorn
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Dict
 
-# -----------------------------
-# 日志优化
-# -----------------------------
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(levelname)s:%(name)s:%(message)s"
+app = FastAPI(title="大狗智能体管理")
+
+# -------------------------
+# 跨域配置，允许所有来源
+# -------------------------
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 允许所有域名访问
+    allow_credentials=True,
+    allow_methods=["*"],  # 允许所有 HTTP 方法
+    allow_headers=["*"],  # 允许所有请求头
 )
-uvicorn_logger = logging.getLogger("uvicorn")
-uvicorn_logger.setLevel(logging.INFO)
-uvicorn_access_logger = logging.getLogger("uvicorn.access")
-uvicorn_access_logger.setLevel(logging.INFO)
-# -----------------------------
-# 日志优化结束
-# -----------------------------
 
-app = FastAPI(title="大狗超级获客智能体")
-
-# -----------------------------
-# 挂载静态文件，显示 index.html
-# -----------------------------
-app.mount("/", StaticFiles(directory=".", html=True), name="static")
-
-# -----------------------------
-# 测试接口
-# -----------------------------
-@app.get("/ping")
-def ping():
-    return {"message": "pong"}
-
-# -----------------------------
-# 示例 IP 账号
-# -----------------------------
+# -------------------------
+# 数据模型
+# -------------------------
 class IPAccount(BaseModel):
     id: int
     name: str
     industry: str
     product: str
-    persona: str
-    customer_profile: str
+    persona: str = ""
+    customer_profile: str = ""
 
-ip_accounts_db: List[IPAccount] = []
-
-@app.post('/ip_account')
-def create_ip_account(account: IPAccount):
-    ip_accounts_db.append(account)
-    return {'message': 'IP账号创建成功', 'account': account}
-
-@app.get('/ip_accounts')
-def list_ip_accounts():
-    return ip_accounts_db
-
-# -----------------------------
-# 文案生成示例
-# -----------------------------
 class CopyRequest(BaseModel):
     ip_id: int
-    theme: str
+    topic: str
 
-@app.post('/generate_copy')
+# -------------------------
+# 数据存储（示例）
+# -------------------------
+ip_accounts = {}
+
+# -------------------------
+# 创建 IP 账号
+# -------------------------
+@app.post("/ip_account")
+def create_ip_account(account: IPAccount):
+    if account.id in ip_accounts:
+        return {"message": "IP账号已存在", "account": ip_accounts[account.id]}
+    
+    ip_accounts[account.id] = account.dict()
+    return {"message": "IP账号创建成功", "account": ip_accounts[account.id]}
+
+# -------------------------
+# 生成文案
+# -------------------------
+@app.post("/generate_copy")
 def generate_copy(req: CopyRequest):
-    copy_text = f"AI生成文案示例: 针对IP {req.ip_id}, 主题 {req.theme}"
-    return {'copy': copy_text}
+    if req.ip_id not in ip_accounts:
+        return {"detail": "IP账号不存在"}
 
-# -----------------------------
-# 其它模块接口
-# -----------------------------
-content_calendar: List[Dict] = [{'date': '2026-04-27', 'title': '示例内容'}]
-knowledge_base: List[Dict] = [{'title': '行业指南示例'}]
-materials: List[Dict] = [{'name': '示例素材'}]
-data_board: Dict = {'total_copies': 5, 'ip_count': len(ip_accounts_db)}
+    account = ip_accounts[req.ip_id]
+    copy_text = f"AI生成文案示例: 针对IP {req.ip_id}, 主题 {req.topic}, 产品 {account['product']}"
+    return {"copy": copy_text}
 
-@app.get('/content_calendar')
-def get_content_calendar():
-    return content_calendar
-
-@app.get('/knowledge_base')
-def get_knowledge_base():
-    return knowledge_base
-
-@app.get('/materials')
-def get_materials():
-    return materials
-
-@app.get('/data_board')
-def get_data_board():
-    return data_board
-
-# -----------------------------
-# 深度学习、爆款选题、AI视频接口示例
-# -----------------------------
-deep_learning_samples: List[Dict] = [{'title': '示例文案样本'}]
-@app.get('/deep_learning_samples')
-def get_deep_learning_samples():
-    return deep_learning_samples
-
-hot_topics: List[Dict] = [{'title': '爆款选题示例'}]
-@app.get('/hot_topics')
-def get_hot_topics():
-    return hot_topics
-
-ai_videos: List[Dict] = [{'title': 'AI生成视频示例'}]
-@app.get('/ai_videos')
-def get_ai_videos():
-    return ai_videos
-
-# -----------------------------
-# Railway 启动方式（动态端口）
-# -----------------------------
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))  # Railway 自动分配端口
-    uvicorn.run("main:app", host="0.0.0.0", port=port, log_level="info")
+# -------------------------
+# 简单示例接口
+# -------------------------
+@app.get("/ping")
+def ping():
+    return {"message": "pong"}
