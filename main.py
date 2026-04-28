@@ -107,9 +107,9 @@ def get_ai_videos():
     return ai_videos
 
 # -----------------------------
-# Railway 部署优化（端口动态）
+# Railway 部署启动方式优化（端口动态）
 # -----------------------------
 if __name__ == "__main__":
-    # 自动读取 Railway 分配端口，避免硬编码 8080
+    # 自动读取 Railway 分配端口
     port = int(os.environ.get("PORT", 8000))  # 本地测试默认 8000
     uvicorn.run("main:app", host="0.0.0.0", port=port, log_level="info")
