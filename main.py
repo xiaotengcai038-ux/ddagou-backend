@@ -24,7 +24,7 @@ uvicorn_access_logger.setLevel(logging.INFO)
 app = FastAPI(title="大狗超级获客智能体")
 
 # -----------------------------
-# 根路径测试接口
+# 测试接口
 # -----------------------------
 @app.get("/ping")
 def ping():
@@ -107,9 +107,8 @@ def get_ai_videos():
     return ai_videos
 
 # -----------------------------
-# Railway 部署启动方式优化（端口动态）
+# Railway 启动方式（动态端口）
 # -----------------------------
 if __name__ == "__main__":
-    # 自动读取 Railway 分配端口
-    port = int(os.environ.get("PORT", 8000))  # 本地测试默认 8000
+    port = int(os.environ.get("PORT", 8000))  # Railway 自动分配端口
     uvicorn.run("main:app", host="0.0.0.0", port=port, log_level="info")
