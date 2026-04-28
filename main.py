@@ -13,6 +13,7 @@ uvicorn_logger.setLevel(logging.INFO)
 
 uvicorn_access_logger = logging.getLogger("uvicorn.access")
 uvicorn_access_logger.setLevel(logging.INFO)
+
 # -----------------------------
 # 日志优化结束
 # -----------------------------
