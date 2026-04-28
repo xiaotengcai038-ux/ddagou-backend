@@ -1,8 +1,10 @@
 # main.py
-@app.get("/ping")
-def ping():
-    return {"message": "pong"}
 import logging
+import os
+import uvicorn
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import List, Dict
 
 # -----------------------------
 # 日志优化
@@ -11,8 +13,6 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s:%(name)s:%(message)s"
 )
-
-import uvicorn
 uvicorn_logger = logging.getLogger("uvicorn")
 uvicorn_logger.setLevel(logging.INFO)
 uvicorn_access_logger = logging.getLogger("uvicorn.access")
@@ -21,12 +21,14 @@ uvicorn_access_logger.setLevel(logging.INFO)
 # 日志优化结束
 # -----------------------------
 
-# 导入 FastAPI 和数据类型
-from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import List, Dict
-
 app = FastAPI(title="大狗超级获客智能体")
+
+# -----------------------------
+# 根路径测试接口
+# -----------------------------
+@app.get("/ping")
+def ping():
+    return {"message": "pong"}
 
 # -----------------------------
 # 示例 IP 账号
@@ -108,7 +110,5 @@ def get_ai_videos():
 # Railway 推荐启动方式
 # -----------------------------
 if __name__ == "__main__":
-    # 使用环境变量 $PORT，Railway 自动分配端口
-    import os
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run("main:app", host="0.0.0.0", port=port, log_level="info")
