@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>大狗智能体管理</title>
+</head>
+<body>
+  <h1>大狗智能体管理</h1>
+
+  <!-- 创建 IP账号 -->
+  <h2>创建 IP账号</h2>
+  <form id="ipForm">
+    ID: <input type="number" name="id"><br>
+    Name: <input type="text" name="name"><br>
+    Industry: <input type="text" name="industry"><br>
+    Product: <input type="text" name="product"><br>
+    Persona: <input type="text" name="persona"><br>
+    Customer Profile: <input type="text" name="customer_profile"><br>
+    <button type="submit">创建</button>
+  </form>
+  <pre id="ipResult"></pre>
+
+  <!-- 生成文案 -->
+  <h2>生成文案</h2>
+  <form id="copyForm">
+    IP ID: <input type="number" name="ip_id"><br>
+    主题: <input type="text" name="theme"><br>
+    <button type="submit">生成</button>
+  </form>
+  <pre id="copyResult"></pre>
+
+<script>
+  const baseUrl = '';
+
+  // 创建 IP账号
+  document.getElementById('ipForm').onsubmit = async function(e){
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(this));
+    const res = await fetch(baseUrl + '/ip_account', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    document.getElementById('ipResult').innerText = JSON.stringify(json,null,2);
+  };
+
+  // 生成文案
+  document.getElementById('copyForm').onsubmit = async function(e){
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(this));
+    const res = await fetch(baseUrl + '/generate_copy', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    document.getElementById('copyResult').innerText = JSON.stringify(json,null,2);
+  };
+</script>
+</body>
+</html>
