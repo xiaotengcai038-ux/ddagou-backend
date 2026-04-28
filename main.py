@@ -1,4 +1,7 @@
 # main.py
+@app.get("/ping")
+def ping():
+    return {"message": "pong"}
 import logging
 
 # -----------------------------
