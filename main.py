@@ -3,6 +3,7 @@ import logging
 import os
 import uvicorn
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Dict
 
@@ -22,6 +23,11 @@ uvicorn_access_logger.setLevel(logging.INFO)
 # -----------------------------
 
 app = FastAPI(title="大狗超级获客智能体")
+
+# -----------------------------
+# 挂载静态文件，显示 index.html
+# -----------------------------
+app.mount("/", StaticFiles(directory=".", html=True), name="static")
 
 # -----------------------------
 # 测试接口
